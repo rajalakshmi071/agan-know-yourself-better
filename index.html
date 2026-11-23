@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agan — Know yourself better</title>
+  <style>
+    :root {
+      --bg-void: #050507;
+      --bg-surface: #0c0c10;
+      --bg-elevated: #14141a;
+      --bg-card: #191920;
+      --gold: #f5c451;
+      --gold-soft: #fde68a;
+      --gold-deep: #b8860b;
+      --gold-border: rgba(245, 196, 81, 0.25);
+      --gold-glow: 0 0 26px rgba(245, 196, 81, 0.16);
+      --white: #ffffff;
+      --text-muted: #a1a1aa;
+      --border-subtle: rgba(255, 255, 255, 0.09);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.75);
+      --radius: 16px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at 85% 12%, rgba(245, 196, 81, 0.09) 0%, transparent 40%),
+        radial-gradient(circle at 12% 88%, rgba(255, 255, 255, 0.04) 0%, transparent 35%),
+        var(--bg-void);
+      color: var(--white);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: hidden;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* ---------------- BUTTONS & INPUTS ---------------- */
+    .btn {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 18px;
+      font-size: 0.94rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold-soft), var(--gold), #d99b26);
+      color: #09090b;
+      box-shadow: 0 6px 20px rgba(245, 196, 81, 0.22);
+    }
+
+    .btn-gold:hover {
+      box-shadow: 0 8px 26px rgba(245, 196, 81, 0.36);
+    }
+
+    .btn-white {
+      background: var(--white);
+      color: #09090b;
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 1px solid var(--gold-border);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--gold);
+      background: rgba(245, 196, 81, 0.07);
+    }
+
+    input, textarea {
+      width: 100%;
+      background: var(--bg-void);
+      border: 1px solid var(--border-subtle);
+      color: var(--white);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    input:focus, textarea:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(245, 196, 81, 0.12);
+    }
+
+    /* ---------------- LOGIN SCREEN ---------------- */
+    .auth-wrapper {
+      width: 100%;
+      max-width: 430px;
+      padding: 20px;
+    }
+
+    .auth-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--gold-border);
+      border-radius: 24px;
+      padding: 36px 28px;
+      box-shadow: var(--shadow), var(--gold-glow);
+    }
+
+    .brand-mark {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .gold-crest {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, var(--gold), var(--gold-deep));
+      display: grid;
+      place-items: center;
+      color: #050507;
+      font-weight: 800;
+      font-size: 1.15rem;
+      box-shadow: 0 0 20px rgba(245, 196, 81, 0.35);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--white);
+    }
+
+    .brand-title span {
+      color: var(--gold);
+    }
+
+    .brand-sub {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 22px;
+      line-height: 1.55;
+    }
+
+    .security-pill {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      background: rgba(245, 196, 81, 0.08);
+      border: 1px solid var(--gold-border);
+      color: var(--gold-soft);
+      font-size: 0.8rem;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 22px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    /* ---------------- CONSENT MODAL ---------------- */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(5, 5, 7, 0.86);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal-card {
+      max-width: 480px;
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--gold-border);
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: var(--shadow), var(--gold-glow);
+      animation: popIn 0.28s ease;
+    }
+
+    .modal-card h2 {
+      font-size: 1.32rem;
+      margin-bottom: 10px;
+      color: var(--gold);
+    }
+
+    .modal-card p {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .consent-points {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 20px;
+      font-size: 0.86rem;
+      color: #e4e4e7;
+      display: grid;
+      gap: 8px;
+    }
+
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* ---------------- MAIN APP SHELL ---------------- */
+    .app-shell {
+      width: 100%;
+      max-width: 1180px;
+      height: 92vh;
+      margin: 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--gold-border);
+      border-radius: 24px;
+      box-shadow: var(--shadow), var(--gold-glow);
+      display: grid;
+      grid-template-columns: 270px 1fr;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--bg-void);
+      border-right: 1px solid var(--gold-border);
+      padding: 24px 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .nav-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 26px;
+    }
+
+    .nav-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.94rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s ease;
+    }
+
+    .nav-btn:hover {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--white);
+    }
+
+    .nav-btn.active {
+      background: rgba(245, 196, 81, 0.12);
+      color: var(--gold);
+      border-color: var(--gold-border);
+      font-weight: 600;
+    }
+
+    .sidebar-footer {
+      display: grid;
+      gap: 10px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .status-box {
+      background: var(--bg-elevated);
+      padding: 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      line-height: 1.5;
+    }
+
+    /* Main Content Area */
+    .main-view {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+      background: radial-gradient(circle at top center, rgba(245, 196, 81, 0.04), transparent 50%);
+    }
+
+    .view-panel {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    /* ---------------- CHAT VIEW (MIRAGE) ---------------- */
+    .chat-header {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--gold-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(12, 12, 16, 0.92);
+    }
+
+    .mirage-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .mirage-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold-border);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 14px rgba(245, 196, 81, 0.18);
+    }
+
+    .mood-pill {
+      font-size: 0.82rem;
+      padding: 6px 13px;
+      border-radius: 999px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold-border);
+      color: var(--gold-soft);
+      font-weight: 500;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 24px 24px 72px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+    }
+
+    .msg-row {
+      display: flex;
+      flex-direction: column;
+      max-width: 74%;
+      position: relative;
+      animation: msgSlide 0.22s ease;
+    }
+
+    .msg-row.user {
+      align-self: flex-end;
+      align-items: flex-end;
+    }
+
+    .msg-row.mirage {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .msg-bubble {
+      padding: 13px 17px;
+      border-radius: 16px;
+      font-size: 0.94rem;
+      line-height: 1.55;
+      position: relative;
+    }
+
+    .msg-row.mirage .msg-bubble {
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold-border);
+      color: var(--white);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-row.user .msg-bubble {
+      background: var(--white);
+      color: #09090b;
+      font-weight: 500;
+      border: 1px solid var(--gold);
+      border-bottom-right-radius: 4px;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    .msg-action-tag {
+      display: block;
+      font-size: 0.78rem;
+      color: var(--gold);
+      font-style: italic;
+      margin-bottom: 5px;
+    }
+
+    .msg-meta {
+      font-size: 0.73rem;
+      color: var(--text-muted);
+      margin-top: 5px;
+    }
+
+    /* Mood Emoji Pop-Out */
+    .mood-pop-emoji {
+      position: absolute;
+      top: -12px;
+      left: -12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--bg-void);
+      border: 1px solid var(--gold);
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.65);
+      animation: emojiPop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Typing Indicator */
+    .typing-dots {
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+      padding: 4px 2px;
+    }
+
+    .typing-dots span {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+      animation: bounceDot 1s infinite ease-in-out;
+    }
+
+    .typing-dots span:nth-child(2) { animation-delay: 0.15s; }
+    .typing-dots span:nth-child(3) { animation-delay: 0.3s; }
+
+    /* ---------------- PEEKING PIXEL CAT ---------------- */
+    .chat-input-zone {
+      position: relative;
+      border-top: 1px solid var(--gold-border);
+      background: var(--bg-void);
+      padding: 16px 24px 20px;
+    }
+
+    .peeking-cat-anchor {
+      position: absolute;
+      right: 34px;
+      top: -62px;
+      z-index: 25;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      pointer-events: auto;
+    }
+
+    .cat-speech-bubble {
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold);
+      color: var(--white);
+      font-size: 0.78rem;
+      padding: 7px 12px;
+      border-radius: 12px;
+      border-bottom-right-radius: 3px;
+      margin-bottom: 6px;
+      max-width: 230px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6);
+      animation: popIn 0.22s ease;
+      pointer-events: none;
+    }
+
+    .pixel-cat-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      display: block;
+      transform-origin: bottom center;
+      animation: catPeekIdle 3.8s ease-in-out infinite;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+      filter: drop-shadow(0 -4px 12px rgba(245, 196, 81, 0.22));
+    }
+
+    .pixel-cat-btn:hover {
+      transform: translateY(-7px) scale(1.05);
+    }
+
+    .pixel-cat-btn.booped {
+      animation: catBoop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .pixel-cat-svg {
+      width: 96px;
+      height: 72px;
+      display: block;
+      shape-rendering: crispEdges;
+    }
+
+    .chat-input-bar {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* ---------------- 5-SECOND MOTIVATIONAL STICKER ---------------- */
+    .sticker-toast {
+      position: absolute;
+      bottom: 106px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(440px, calc(100% - 36px));
+      background: linear-gradient(135deg, #121216, #1b1710);
+      border: 1px solid var(--gold);
+      border-radius: 18px;
+      padding: 16px 18px;
+      box-shadow: 0 20px 44px rgba(0, 0, 0, 0.8), var(--gold-glow);
+      z-index: 35;
+      animation: stickerSlideUp 0.35s ease;
+    }
+
+    .sticker-top {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sticker-badge {
+      font-size: 1.9rem;
+      flex-shrink: 0;
+    }
+
+    .sticker-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--gold);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .sticker-quote {
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: var(--white);
+    }
+
+    .sticker-timer-track {
+      margin-top: 12px;
+      height: 4px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .sticker-timer-fill {
+      height: 100%;
+      width: 100%;
+      background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+      animation: shrink5s 5s linear forwards;
+    }
+
+    /* ---------------- DECISION HELPER & PROFILE ---------------- */
+    .panel-pad {
+      padding: 26px 28px;
+      display: grid;
+      gap: 20px;
+    }
+
+    .section-title {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--white);
+    }
+
+    .section-sub {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-top: 4px;
+    }
+
+    .card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold-border);
+      border-radius: var(--radius);
+      padding: 20px;
+    }
+
+    .score-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .score-circle {
+      width: 112px;
+      height: 112px;
+      border-radius: 50%;
+      background: conic-gradient(var(--gold) calc(var(--pct, 78) * 1%), rgba(255, 255, 255, 0.09) 0);
+      display: grid;
+      place-items: center;
+      position: relative;
+      transition: filter 0.25s ease;
+    }
+
+    .score-circle::before {
+      content: "";
+      width: 88px;
+      height: 88px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      position: absolute;
+    }
+
+    .score-value {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1.4rem;
+      color: var(--gold);
+    }
+
+    .score-value span {
+      display: block;
+      font-size: 0.68rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .blurred {
+      filter: blur(8px);
+      user-select: none;
+    }
+
+    .trait-row {
+      margin-top: 14px;
+    }
+
+    .trait-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.86rem;
+      margin-bottom: 6px;
+      color: #e4e4e7;
+    }
+
+    .progress-bar {
+      height: 8px;
+      border-radius: 99px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 99px;
+      background: linear-gradient(90deg, var(--gold-soft), var(--gold));
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #27272a;
+      border: 1px solid var(--border-subtle);
+      border-radius: 999px;
+      cursor: pointer;
+      transition: 0.25s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      border-radius: 50%;
+      background: var(--white);
+      transition: 0.25s;
+    }
+
+    .switch input:checked + .slider {
+      background: var(--gold);
+      border-color: var(--gold);
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(22px);
+      background: #09090b;
+    }
+
+    /* ---------------- ANIMATIONS ---------------- */
+    @keyframes emojiPop {
+      0% { transform: scale(0); opacity: 0; }
+      70% { transform: scale(1.25); opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.94); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes msgSlide {
+      from { transform: translateY(8px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes stickerSlideUp {
+      from { transform: translate(-50%, 16px); opacity: 0; }
+      to { transform: translate(-50%, 0); opacity: 1; }
+    }
+
+    @keyframes shrink5s {
+      from { width: 100%; }
+      to { width: 0%; }
+    }
+
+    @keyframes bounceDot {
+      0%, 80%, 100% { transform: scale(0.7); opacity: 0.45; }
+      40% { transform: scale(1.1); opacity: 1; }
+    }
+
+    @keyframes catPeekIdle {
+      0%, 100% { transform: translateY(4px); }
+      50% { transform: translateY(-2px); }
+    }
+
+    @keyframes catBoop {
+      0% { transform: translateY(0) scale(1); }
+      35% { transform: translateY(-12px) scale(1.08, 0.94); }
+      70% { transform: translateY(2px) scale(0.97, 1.03); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    /* ---------------- RESPONSIVE ---------------- */
+    @media (max-width: 820px) {
+      .app-shell {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        height: 96vh;
+        margin: 8px;
+      }
+
+      .sidebar {
+        padding: 14px 16px;
+        border-right: none;
+        border-bottom: 1px solid var(--gold-border);
+      }
+
+      .sidebar-footer { display: none; }
+
+      .nav-list {
+        flex-direction: row;
+        margin-top: 12px;
+        overflow-x: auto;
+      }
+
+      .nav-btn {
+        white-space: nowrap;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+      }
+
+      .msg-row { max-width: 86%; }
+
+      .peeking-cat-anchor {
+        right: 16px;
+        top: -54px;
+      }
+
+      .pixel-cat-svg {
+        width: 80px;
+        height: 60px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= 1. LOGIN SCREEN ================= -->
+  <section id="loginView" class="auth-wrapper">
+    <div class="auth-card">
+      <div class="brand-mark">
+        <div class="gold-crest">A</div>
+        <div class="brand-title">Agan<span>.</span></div>
+      </div>
+      <p class="brand-sub">Know yourself better. Quiet overthinking and make clear decisions guided by your inner patterns.</p>
+
+      <div class="security-pill">
+        <span>🔒</span>
+        <span>Private &amp; encrypted. Your data is never sold or shared.</span>
+      </div>
+
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="usernameInput">Your Name or Email</label>
+          <input id="usernameInput" type="text" placeholder="e.g., Aarav" required />
+        </div>
+        <div class="form-group">
+          <label for="passwordInput">Passcode</label>
+          <input id="passwordInput" type="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn btn-gold" style="width: 100%; margin-top: 6px;">
+          Enter Your Safe Space
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ================= 2. POST-LOGIN AI CONSENT MODAL ================= -->
+  <div id="consentModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <h2>Train Mirage with your chats?</h2>
+      <p>
+        Before you meet <strong>Mirage</strong>, choose whether Agan may learn from your conversations to personalize future guidance.
+      </p>
+      <div class="consent-points">
+        <div>✨ <strong>Not mandatory:</strong> Saying "No" keeps everything working seamlessly.</div>
+        <div>🔒 <strong>Strictly secured:</strong> Your data stays confidential and never leaves your vault.</div>
+        <div>⚙️ <strong>Change anytime:</strong> Toggle this preference later in your Profile.</div>
+      </div>
+      <div class="modal-actions">
+        <button id="consentDeclineBtn" class="btn btn-outline">No, keep session-only</button>
+        <button id="consentAcceptBtn" class="btn btn-gold">Yes, allow AI training</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= 3. MAIN APPLICATION ================= -->
+  <main id="appShell" class="app-shell hidden">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div>
+        <div class="brand-mark">
+          <div class="gold-crest" style="width: 34px; height: 34px; font-size: 1rem;">A</div>
+          <div>
+            <div style="font-weight: 800; font-size: 1.15rem; color: var(--white);">Agan<span style="color: var(--gold);">.</span></div>
+            <div style="font-size: 0.74rem; color: var(--text-muted);">Know yourself better</div>
+          </div>
+        </div>
+
+        <nav class="nav-list">
+          <button class="nav-btn active" data-tab="chatTab">🐾 Talk to Mirage</button>
+          <button class="nav-btn" data-tab="decisionTab">🧭 Decision Helper</button>
+          <button class="nav-btn" data-tab="profileTab">🛡️ Confidential Profile</button>
+        </nav>
+      </div>
+
+      <div class="sidebar-footer">
+        <div class="status-box">
+          <div style="color: var(--gold); font-weight: 600;">🔒 Encrypted Vault</div>
+          <div id="sidebarConsentStatus" style="margin-top: 4px;">AI Training: Off</div>
+        </div>
+        <button id="logoutBtn" class="btn btn-outline" style="padding: 9px 12px; font-size: 0.82rem;">Lock &amp; Sign Out</button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <section class="main-view">
+
+      <!-- TAB 1: CHAT WITH MIRAGE -->
+      <div id="chatTab" class="view-panel">
+        <header class="chat-header">
+          <div class="mirage-info">
+            <div class="mirage-badge" aria-hidden="true">
+              <!-- Mini Pixel Cat Icon -->
+              <svg width="26" height="22" viewBox="0 0 24 18" style="shape-rendering: crispEdges;">
+                <rect x="3" y="1" width="2" height="3" fill="#ffffff"/>
+                <rect x="5" y="2" width="1" height="2" fill="#ffffff"/>
+                <rect x="4" y="2" width="1" height="2" fill="#f5c451"/>
+                <rect x="19" y="1" width="2" height="3" fill="#ffffff"/>
+                <rect x="18" y="2" width="1" height="2" fill="#ffffff"/>
+                <rect x="19" y="2" width="1" height="2" fill="#f5c451"/>
+                <rect x="3" y="4" width="18" height="10" fill="#ffffff"/>
+                <rect x="6" y="7" width="2" height="3" fill="#050507"/>
+                <rect x="16" y="7" width="2" height="3" fill="#050507"/>
+                <rect x="11" y="10" width="2" height="1" fill="#f5c451"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-weight: 700;">Mirage <span style="color: var(--gold); font-size: 0.78rem; font-weight: 500;">• Pixel Companion</span></div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">Tap the peeking cat anytime to play</div>
+            </div>
+          </div>
+          <div id="currentMoodPill" class="mood-pill">Mood: Curious ✨</div>
+        </header>
+
+        <div id="chatMessages" class="chat-messages">
+          <!-- Messages render dynamically here -->
+        </div>
+
+        <!-- 5-Second Motivational Quote Sticker -->
+        <div id="stickerToast" class="sticker-toast hidden">
+          <div class="sticker-top">
+            <div id="stickerEmoji" class="sticker-badge">🌟</div>
+            <div>
+              <div class="sticker-label">Golden Reminder from Agan</div>
+              <div id="stickerQuote" class="sticker-quote"></div>
+            </div>
+          </div>
+          <div class="sticker-timer-track">
+            <div id="stickerTimerFill" class="sticker-timer-fill"></div>
+          </div>
+        </div>
+
+        <!-- Clean Input Zone + Peeking White Pixel Cat -->
+        <div class="chat-input-zone">
+          <div class="peeking-cat-anchor">
+            <div id="catSpeechBubble" class="cat-speech-bubble hidden"></div>
+            <button id="peekingCatBtn" class="pixel-cat-btn" type="button" title="Boop Mirage!">
+              <svg class="pixel-cat-svg" viewBox="0 0 24 18" xmlns="http://www.w3.org/2000/svg">
+                <!-- Left Ear -->
+                <rect x="3" y="1" width="2" height="1" fill="#ffffff"/>
+                <rect x="3" y="2" width="3" height="1" fill="#ffffff"/>
+                <rect x="3" y="3" width="4" height="1" fill="#ffffff"/>
+                <rect x="4" y="2" width="1" height="1" fill="#f5c451"/>
+                <rect x="4" y="3" width="2" height="1" fill="#f5c451"/>
+
+                <!-- Right Ear -->
+                <rect x="19" y="1" width="2" height="1" fill="#ffffff"/>
+                <rect x="18" y="2" width="3" height="1" fill="#ffffff"/>
+                <rect x="17" y="3" width="4" height="1" fill="#ffffff"/>
+                <rect x="19" y="2" width="1" height="1" fill="#f5c451"/>
+                <rect x="18" y="3" width="2" height="1" fill="#f5c451"/>
+
+                <!-- Head Silhouette -->
+                <rect x="3" y="4" width="18" height="1" fill="#ffffff"/>
+                <rect x="2" y="5" width="20" height="8" fill="#ffffff"/>
+                <rect x="3" y="13" width="18" height="1" fill="#e4e4e7"/>
+
+                <!-- Subtle Whiskers -->
+                <rect x="0" y="9" width="2" height="1" fill="#f5c451" opacity="0.7"/>
+                <rect x="0" y="11" width="2" height="1" fill="#f5c451" opacity="0.7"/>
+                <rect x="22" y="9" width="2" height="1" fill="#f5c451" opacity="0.7"/>
+                <rect x="22" y="11" width="2" height="1" fill="#f5c451" opacity="0.7"/>
+
+                <!-- Dynamic Pixel Eyes Group -->
+                <g id="catEyesGroup">
+                  <!-- Default Bright Eyes -->
+                  <rect x="6" y="7" width="2" height="3" fill="#09090b"/>
+                  <rect x="6" y="7" width="1" height="1" fill="#ffffff"/>
+                  <rect x="16" y="7" width="2" height="3" fill="#09090b"/>
+                  <rect x="16" y="7" width="1" height="1" fill="#ffffff"/>
+                </g>
+
+                <!-- Cheek Blush (Gold Tint) -->
+                <rect x="4" y="10" width="2" height="1" fill="#fde68a"/>
+                <rect x="18" y="10" width="2" height="1" fill="#fde68a"/>
+
+                <!-- Nose & Cute :3 Mouth -->
+                <rect x="11" y="10" width="2" height="1" fill="#f5c451"/>
+                <rect x="9" y="11" width="1" height="1" fill="#18181b"/>
+                <rect x="10" y="12" width="1" height="1" fill="#18181b"/>
+                <rect x="11" y="11" width="2" height="1" fill="#18181b"/>
+                <rect x="13" y="12" width="1" height="1" fill="#18181b"/>
+                <rect x="14" y="11" width="1" height="1" fill="#18181b"/>
+
+                <!-- Golden Collar Accent -->
+                <rect x="8" y="14" width="8" height="1" fill="#f5c451"/>
+                <rect x="11" y="15" width="2" height="1" fill="#fde68a"/>
+
+                <!-- Peeking Pixel Paws gripping the golden edge -->
+                <rect x="4" y="14" width="4" height="3" fill="#ffffff"/>
+                <rect x="5" y="15" width="1" height="1" fill="#f5c451"/>
+                <rect x="6" y="16" width="1" height="1" fill="#f5c451"/>
+                <rect x="4" y="17" width="4" height="1" fill="#d4d4d8"/>
+
+                <rect x="16" y="14" width="4" height="3" fill="#ffffff"/>
+                <rect x="18" y="15" width="1" height="1" fill="#f5c451"/>
+                <rect x="17" y="16" width="1" height="1" fill="#f5c451"/>
+                <rect x="16" y="17" width="4" height="1" fill="#d4d4d8"/>
+              </svg>
+            </button>
+          </div>
+
+          <form id="chatForm" class="chat-input-bar">
+            <input id="chatInput" type="text" placeholder="Type freely... Mirage is peeking and listening" autocomplete="off" />
+            <button type="submit" class="btn btn-gold">Send</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- TAB 2: DECISION HELPER -->
+      <div id="decisionTab" class="view-panel hidden">
+        <div class="panel-pad">
+          <div>
+            <h2 class="section-title">Decision Helper</h2>
+            <p class="section-sub">Overthinking a choice? Let Agan weigh your dilemma using your personality insights and past reflections.</p>
+          </div>
+
+          <div class="card">
+            <form id="decisionForm" style="display: grid; gap: 14px;">
+              <div>
+                <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px;">What decision are you stuck on?</label>
+                <input id="dilemmaInput" type="text" placeholder="e.g., Should I switch jobs or stay where I feel safe?" required />
+              </div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div>
+                  <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Option A</label>
+                  <input id="optionAInput" type="text" placeholder="e.g., Switch jobs" required />
+                </div>
+                <div>
+                  <label style="font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px;">Option B</label>
+                  <input id="optionBInput" type="text" placeholder="e.g., Stay for now" required />
+                </div>
+              </div>
+              <button type="submit" class="btn btn-gold" style="justify-self: start;">Ask Mirage to Decide</button>
+            </form>
+          </div>
+
+          <div id="decisionResult" class="card hidden">
+            <div style="font-size: 0.78rem; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">Mirage's Verdict</div>
+            <h3 id="decisionChoiceTitle" style="margin: 8px 0; font-size: 1.15rem; color: var(--white);"></h3>
+            <p id="decisionExplanation" style="color: #d4d4d8; line-height: 1.6; font-size: 0.94rem;"></p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAB 3: PROFILE & CONFIDENTIAL SCORE -->
+      <div id="profileTab" class="view-panel hidden">
+        <div class="panel-pad">
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h2 class="section-title" id="profileGreeting">Your Confidential Profile</h2>
+              <p class="section-sub">Generated privately from your past sessions and emotional rhythm.</p>
+            </div>
+            <button id="toggleBlurBtn" class="btn btn-outline">👁️ Hide Confidential Score</button>
+          </div>
+
+          <div class="card">
+            <div class="score-header">
+              <div style="display: flex; align-items: center; gap: 20px;">
+                <div id="scoreCircle" class="score-circle" style="--pct: 78;">
+                  <div class="score-value">
+                    <span id="scoreNum" style="font-size: 1.45rem; color: var(--gold);">78</span>
+                    <span>/ 100</span>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-size: 1.1rem; font-weight: 700;">Confidential Self-Clarity Score</div>
+                  <p style="color: var(--text-muted); font-size: 0.88rem; max-width: 390px; margin-top: 4px;">
+                    Reflects emotional balance, overthinking recovery, and inner alignment across your past data. Strictly private.
+                  </p>
+                </div>
+              </div>
+              <span class="mood-pill">🔒 Zero-Share Vault</span>
+            </div>
+
+            <div class="trait-row">
+              <div class="trait-label"><span>Self-Awareness</span><span id="traitAwareness">82%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 82%;"></div></div>
+            </div>
+            <div class="trait-row">
+              <div class="trait-label"><span>Overthinking Control</span><span id="traitCalm">64%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 64%;"></div></div>
+            </div>
+            <div class="trait-row">
+              <div class="trait-label"><span>Decision Confidence</span><span id="traitDecision">76%</span></div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 76%;"></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="toggle-row">
+              <div>
+                <div style="font-weight: 600;">Allow AI Training from Conversations</div>
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-top: 3px;">
+                  Optional. Even when switched off, Mirage stays active and your thoughts remain encrypted.
+                </div>
+              </div>
+              <label class="switch">
+                <input id="profileConsentToggle" type="checkbox" />
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <script>
+    // ---------------- STATE ----------------
+    const state = {
+      username: "Friend",
+      aiTrainingAllowed: false,
+      confidentialScore: 78,
+      negativeStreak: 0,
+      stickerTimeout: null,
+      catBubbleTimeout: null,
+      scoreHidden: false,
+      currentCatMood: "default",
+      usedLines: new Set(),
+      turnCount: 0
+    };
+
+    const motivationalStickers = [
+      { emoji: "✨", quote: "You don’t need all the answers tonight. One calm breath and one small step is enough." },
+      { emoji: "🌙", quote: "Overthinking tells dramatic stories, not facts. Come back to what is real right here." },
+      { emoji: "💛", quote: "Heavy moods pass like clouds—you are the sky holding them, not the storm." },
+      { emoji: "🐾", quote: "Quiet progress still counts. Give yourself the grace you freely give to others." }
+    ];
+
+    // ---------------- DOM ----------------
+    const loginView = document.getElementById("loginView");
+    const loginForm = document.getElementById("loginForm");
+    const consentModal = document.getElementById("consentModal");
+    const appShell = document.getElementById("appShell");
+
+    const chatMessages = document.getElementById("chatMessages");
+    const chatForm = document.getElementById("chatForm");
+    const chatInput = document.getElementById("chatInput");
+    const currentMoodPill = document.getElementById("currentMoodPill");
+
+    const peekingCatBtn = document.getElementById("peekingCatBtn");
+    const catEyesGroup = document.getElementById("catEyesGroup");
+    const catSpeechBubble = document.getElementById("catSpeechBubble");
+
+    const stickerToast = document.getElementById("stickerToast");
+    const stickerEmoji = document.getElementById("stickerEmoji");
+    const stickerQuote = document.getElementById("stickerQuote");
+    const stickerTimerFill = document.getElementById("stickerTimerFill");
+
+    const sidebarConsentStatus = document.getElementById("sidebarConsentStatus");
+    const profileConsentToggle = document.getElementById("profileConsentToggle");
+    const scoreCircle = document.getElementById("scoreCircle");
+    const scoreNum = document.getElementById("scoreNum");
+
+    // ---------------- PIXEL CAT EXPRESSIONS ----------------
+    const catEyeSprites = {
+      default: `
+        <rect x="6" y="7" width="2" height="3" fill="#09090b"/>
+        <rect x="6" y="7" width="1" height="1" fill="#ffffff"/>
+        <rect x="16" y="7" width="2" height="3" fill="#09090b"/>
+        <rect x="16" y="7" width="1" height="1" fill="#ffffff"/>
+      `,
+      blink: `
+        <rect x="6" y="9" width="2" height="1" fill="#09090b"/>
+        <rect x="16" y="9" width="2" height="1" fill="#09090b"/>
+      `,
+      happy: `
+        <rect x="6" y="7" width="2" height="1" fill="#09090b"/>
+        <rect x="5" y="8" width="1" height="1" fill="#09090b"/>
+        <rect x="8" y="8" width="1" height="1" fill="#09090b"/>
+        <rect x="16" y="7" width="2" height="1" fill="#09090b"/>
+        <rect x="15" y="8" width="1" height="1" fill="#09090b"/>
+        <rect x="18" y="8" width="1" height="1" fill="#09090b"/>
+      `,
+      sad: `
+        <rect x="6" y="8" width="2" height="2" fill="#09090b"/>
+        <rect x="6" y="10" width="1" height="1" fill="#93c5fd"/>
+        <rect x="16" y="8" width="2" height="2" fill="#09090b"/>
+        <rect x="17" y="10" width="1" height="1" fill="#93c5fd"/>
+      `,
+      angry: `
+        <rect x="6" y="7" width="2" height="1" fill="#09090b"/>
+        <rect x="7" y="8" width="2" height="2" fill="#09090b"/>
+        <rect x="16" y="7" width="2" height="1" fill="#09090b"/>
+        <rect x="15" y="8" width="2" height="2" fill="#09090b"/>
+      `,
+      overthinking: `
+        <rect x="5" y="7" width="3" height="3" fill="#09090b"/>
+        <rect x="6" y="8" width="1" height="1" fill="#f5c451"/>
+        <rect x="16" y="7" width="3" height="3" fill="#09090b"/>
+        <rect x="17" y="8" width="1" height="1" fill="#f5c451"/>
+      `
+    };
+
+    function setCatExpression(moodKey) {
+      state.currentCatMood = moodKey;
+      catEyesGroup.innerHTML = catEyeSprites[moodKey] || catEyeSprites.default;
+    }
+
+    // Natural periodic blinking
+    setInterval(() => {
+      if (state.currentCatMood === "default") {
+        catEyesGroup.innerHTML = catEyeSprites.blink;
+        setTimeout(() => {
+          if (state.currentCatMood === "default") {
+            catEyesGroup.innerHTML = catEyeSprites.default;
+          }
+        }, 160);
+      }
+    }, 3400);
+
+    function showCatBubble(text, ms = 3200) {
+      catSpeechBubble.textContent = text;
+      catSpeechBubble.classList.remove("hidden");
+      if (state.catBubbleTimeout) clearTimeout(state.catBubbleTimeout);
+      state.catBubbleTimeout = setTimeout(() => {
+        catSpeechBubble.classList.add("hidden");
+      }, ms);
+    }
+
+    const catBoopQuips = [
+      "Mrrp! *nose boop accepted* 🐾",
+      "Psst... I'm guarding your thoughts in gold.",
+      "*purrs softly* Overthinking? Hand me one worry.",
+      "Hey! My pixel ears heard that tap ✨",
+      "Fun fact: clarity usually hides behind the noise.",
+      "*stretches tiny white paws* Ready when you are!"
+    ];
+
+    peekingCatBtn.addEventListener("click", () => {
+      peekingCatBtn.classList.remove("booped");
+      void peekingCatBtn.offsetWidth;
+      peekingCatBtn.classList.add("booped");
+
+      const quip = pickFresh(catBoopQuips, "boop");
+      showCatBubble(quip, 3000);
+    });
+
+    // React when user starts typing
+    chatInput.addEventListener("focus", () => {
+      if (state.turnCount === 0) {
+        showCatBubble("I'm peeking! Tell me anything 👀", 2400);
+      }
+    });
+
+    // ---------------- NON-REPEATING PICKER ----------------
+    function pickFresh(pool, namespace) {
+      const available = pool.filter((item) => !state.usedLines.has(`${namespace}:${item}`));
+      const source = available.length > 0 ? available : pool;
+
+      if (available.length === 0) {
+        pool.forEach((item) => state.usedLines.delete(`${namespace}:${item}`));
+      }
+
+      const chosen = source[Math.floor(Math.random() * source.length)];
+      state.usedLines.add(`${namespace}:${chosen}`);
+      return chosen;
+    }
+
+    // ---------------- AUTH & CONSENT ----------------
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const rawName = document.getElementById("usernameInput").value.trim();
+      state.username = rawName || "Friend";
+      document.getElementById("profileGreeting").textContent = `${state.username}'s Confidential Profile`;
+
+      loginView.classList.add("hidden");
+      consentModal.classList.remove("hidden");
+    });
+
+    function finishOnboarding(allowed) {
+      updateConsentState(allowed);
+      consentModal.classList.add("hidden");
+      appShell.classList.remove("hidden");
+
+      if (chatMessages.children.length === 0) {
+        addMirageMessage(
+          `Hey ${state.username}! *hops onto the golden edge and peers in* This space is locked tight just for you. What’s spinning in your head right now?`,
+          "Mirage peeks over the ledge ✨"
+        );
+      }
+    }
+
+    document.getElementById("consentAcceptBtn").addEventListener("click", () => finishOnboarding(true));
+    document.getElementById("consentDeclineBtn").addEventListener("click", () => finishOnboarding(false));
+
+    function updateConsentState(allowed) {
+      state.aiTrainingAllowed = allowed;
+      profileConsentToggle.checked = allowed;
+      sidebarConsentStatus.textContent = allowed
+        ? "AI Training: Allowed (Private)"
+        : "AI Training: Declined (Session-Only)";
+    }
+
+    profileConsentToggle.addEventListener("change", (e) => updateConsentState(e.target.checked));
+
+    document.getElementById("logoutBtn").addEventListener("click", () => {
+      appShell.classList.add("hidden");
+      loginView.classList.remove("hidden");
+    });
+
+    // ---------------- TABS ----------------
+    document.querySelectorAll(".nav-btn").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-btn").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+
+        const target = btn.getAttribute("data-tab");
+        document.querySelectorAll(".view-panel").forEach((panel) => {
+          panel.classList.toggle("hidden", panel.id !== target);
+        });
+      });
+    });
+
+    // ---------------- MOOD DETECTION ----------------
+    function detectMood(text) {
+      const lower = text.toLowerCase();
+
+      if (/(angry|mad|furious|hate|annoyed|frustrated|irritated|pissed)/.test(lower)) {
+        return { key: "angry", label: "Angry", emoji: "😠", negative: true };
+      }
+      if (/(disappointed|let down|failed|regret|useless|ashamed|not good enough)/.test(lower)) {
+        return { key: "sad", label: "Disappointed", emoji: "😞", negative: true };
+      }
+      if (/(sad|cry|depressed|lonely|hurt|hopeless|overwhelmed|miserable|empty|tired of)/.test(lower)) {
+        return { key: "sad", label: "Sad", emoji: "😢", negative: true };
+      }
+      if (/(overthink|anxious|worried|spiral|mistake|nervous|scared|panic|what if|can't stop thinking)/.test(lower)) {
+        return { key: "overthinking", label: "Overthinking", emoji: "🌀", negative: true };
+      }
+      if (/(happy|great|proud|excited|grateful|good|awesome|love|relieved|joy)/.test(lower)) {
+        return { key: "happy", label: "Happy", emoji: "😊", negative: false };
+      }
+      return { key: "default", label: "Reflective", emoji: "😌", negative: false };
+    }
+
+    function detectTopic(text) {
+      const lower = text.toLowerCase();
+      if (/(job|work|boss|office|career|salary|interview|project)/.test(lower)) return "work";
+      if (/(friend|relationship|love|partner|family|mom|dad|crush|they|someone)/.test(lower)) return "people";
+      if (/(sleep|night|tired|exhausted|insomnia|morning)/.test(lower)) return "rest";
+      if (/(study|exam|college|school|grades|test)/.test(lower)) return "studies";
+      if (/(decide|decision|choice|choose|confused|option)/.test(lower)) return "decision";
+      if (/(future|life|purpose|lost|direction)/.test(lower)) return "future";
+      return "general";
+    }
+
+    // ---------------- 5-SECOND MOTIVATIONAL STICKER ----------------
+    function showMotivationalSticker() {
+      const pick = pickFresh(motivationalStickers, "sticker");
+      stickerEmoji.textContent = pick.emoji;
+      stickerQuote.textContent = `"${pick.quote}"`;
+
+      stickerTimerFill.style.animation = "none";
+      void stickerTimerFill.offsetWidth;
+      stickerTimerFill.style.animation = "shrink5s 5s linear forwards";
+
+      stickerToast.classList.remove("hidden");
+
+      if (state.stickerTimeout) clearTimeout(state.stickerTimeout);
+      state.stickerTimeout = setTimeout(() => {
+        stickerToast.classList.add("hidden");
+      }, 5000);
+    }
+
+    // ---------------- LIVELY NON-REPEATING MIRAGE ENGINE ----------------
+    function generateLivelyReply(userText, mood, topic) {
+      const lower = userText.toLowerCase().trim();
+
+      // Quick greeting check
+      if (/^(hi|hello|hey|yo|hiya|good morning|good evening)\b/.test(lower) && lower.length < 24) {
+        const greetings = [
+          `Hey ${state.username}! My pixel whiskers twitched as soon as you walked in. How's your energy today?`,
+          `Meow—welcome back! Pull up a chair. What's the loudest thought in your mind right now?`,
+          `Hello! I was just batting at a stray thought. Tell me how today is treating you so far.`,
+          `Hi ${state.username}! Ready to sort through some mental clutter, or just venting for a minute?`
+        ];
+        return {
+          action: pickFresh(["*perks both pixel ears*", "*waves a tiny white paw*", "*blinks golden eyes warmly*"], "actGreet"),
+          text: pickFresh(greetings, "greet")
+        };
+      }
+
+      const actionsByMood = {
+        happy: [
+          "*does a happy little pixel bounce*",
+          "*purrs like a tiny motor*",
+          "*ears perk up with a golden sparkle*"
+        ],
+        sad: [
+          "*nudges your hand gently with a white paw*",
+          "*sits quietly beside your words*",
+          "*tilts head softly and listens close*"
+        ],
+        angry: [
+          "*flattens ears in solidarity*",
+          "*taps the golden border sympathetically*",
+          "*hands you a virtual stress-ball*"
+        ],
+        overthinking: [
+          "*catches a spinning thought mid-air*",
+          "*blinks slowly to help slow the room down*",
+          "*places a calm paw right on the pause button*"
+        ],
+        default: [
+          "*peers curiously over the edge*",
+          "*rests chin on tiny white paws*",
+          "*swishes tail thoughtfully*"
+        ]
+      };
+
+      const topicContexts = {
+        work: [
+          "Work pressure has a sneaky way of making one moment feel like your whole identity.",
+          "Career and daily grind worries love stealing peace after hours.",
+          "When work feels heavy, it’s easy to forget you’re a person first, not a productivity machine."
+        ],
+        people: [
+          "Relationships and other people's reactions are impossible to control 100%, which drives an overthinking mind wild.",
+          "People stuff hits deep because we care about being understood.",
+          "Trying to read everyone else's mind is exhausting—no wonder your brain feels crowded."
+        ],
+        rest: [
+          "Everything looks ten times heavier when your battery is running on empty.",
+          "Tired minds love inventing late-night puzzles that don't actually need solving right now.",
+          "Fatigue turns small bumps into mountains."
+        ],
+        studies: [
+          "Academic pressure can trick you into tying your whole worth to a single score or deadline.",
+          "Studying while anxious feels like trying to pour water into a shaking cup."
+        ],
+        decision: [
+          "Choices feel paralyzing when every path seems to carry a hidden 'what if'.",
+          "Indecision usually isn't laziness—it's just caring deeply about getting it right."
+        ],
+        future: [
+          "Looking too far ahead into the fog makes anyone dizzy.",
+          "You don't have to map out the next five years before bedtime."
+        ],
+        general: [
+          "That sounds like it's taking up real space in your head right now.",
+          "I’m glad you put that into words instead of carrying it silently.",
+          "There’s a lot of honesty in what you just shared."
+        ]
+      };
+
+      const moodResponses = {
+        happy: [
+          "Hold onto this exact feeling! Notice what sparked it—that's gold for your personal clarity profile.",
+          "Look at you glowing! Let's bottle a bit of this momentum so future-you remembers what alignment feels like.",
+          "Honestly, seeing you win like this makes my little pixel tail wag."
+        ],
+        sad: [
+          "You don’t have to rush to 'fix' this mood. Sometimes sitting honestly with the ache takes half its weight away.",
+          "It’s completely okay to feel worn down right now. Even strong minds need a soft place to land.",
+          "Disappointment and heaviness sting most when you genuinely cared. That sensitivity isn't a flaw."
+        ],
+        angry: [
+          "Frustration is usually a flare signal showing where a personal boundary got stepped on.",
+          "Let the steam out here—better in our private vault than bottled inside your chest.",
+          "That heat makes total sense. Anger often protects a hurt or an unmet need underneath."
+        ],
+        overthinking: [
+          "Your brain is running 14 tabs at once trying to protect you from surprise. Let's close 13 of them together.",
+          "Notice the loop? You're judging yourself with hindsight or predicting storms that haven't happened yet.",
+          "Spot one thing you can actually touch or do in the next 10 minutes—that breaks the spiral fastest."
+        ],
+        default: [
+          "I'm picking up on a thoughtful shift in how you're looking at things.",
+          "Every honest reflection sharpens how clearly Agan understands your real priorities.",
+          "Interesting angle—there’s usually a deeper clue sitting just beneath a thought like that."
+        ]
+      };
+
+      const followUpQuestions = [
+        "If your best friend told you this exact story, what’s the first thing you’d tell them?",
+        "Does this need an action today, or just permission to let it rest for tonight?",
+        "What’s the single tiniest piece of this you actually control right now?",
+        "Scale of 1 to 10, how much of this worry is fact versus a 'what if' story?",
+        "Do you want comfort right now, or should we dissect this like detectives?",
+        "What would feel like a 5% relief in the next hour?"
+      ];
+
+      const action = pickFresh(actionsByMood[mood.key] || actionsByMood.default, `act_${mood.key}`);
+      const contextLine = pickFresh(topicContexts[topic] || topicContexts.general, `topic_${topic}`);
+      const empathyLine = pickFresh(moodResponses[mood.key] || moodResponses.default, `mood_${mood.key}`);
+      const question = pickFresh(followUpQuestions, "followup");
+
+      return {
+        action,
+        text: `${empathyLine} ${contextLine} ${question}`
+      };
+    }
+
+    // ---------------- CHAT RENDERING ----------------
+    function addUserMessage(text, mood) {
+      const row = document.createElement("div");
+      row.className = "msg-row user";
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      bubble.textContent = text;
+
+      const pop = document.createElement("div");
+      pop.className = "mood-pop-emoji";
+      pop.title = `Detected mood: ${mood.label}`;
+      pop.textContent = mood.emoji;
+      bubble.appendChild(pop);
+
+      const meta = document.createElement("div");
+      meta.className = "msg-meta";
+      meta.textContent = `You • ${mood.label}`;
+
+      row.appendChild(bubble);
+      row.appendChild(meta);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function showTypingIndicator() {
+      const row = document.createElement("div");
+      row.id = "typingIndicatorRow";
+      row.className = "msg-row mirage";
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+      bubble.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+
+      row.appendChild(bubble);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function removeTypingIndicator() {
+      const el = document.getElementById("typingIndicatorRow");
+      if (el) el.remove();
+    }
+
+    function addMirageMessage(text, actionText = "") {
+      const row = document.createElement("div");
+      row.className = "msg-row mirage";
+
+      const bubble = document.createElement("div");
+      bubble.className = "msg-bubble";
+
+      if (actionText) {
+        const actionEl = document.createElement("span");
+        actionEl.className = "msg-action-tag";
+        actionEl.textContent = actionText;
+        bubble.appendChild(actionEl);
+      }
+
+      const textNode = document.createTextNode(text);
+      bubble.appendChild(textNode);
+
+      const meta = document.createElement("div");
+      meta.className = "msg-meta";
+      meta.textContent = "Mirage • Private Companion";
+
+      row.appendChild(bubble);
+      row.appendChild(meta);
+      chatMessages.appendChild(row);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function handleUserSend(text) {
+      const trimmed = text.trim();
+      if (!trimmed) return;
+
+      state.turnCount += 1;
+      const mood = detectMood(trimmed);
+      const topic = detectTopic(trimmed);
+
+      currentMoodPill.textContent = `Mood: ${mood.label} ${mood.emoji}`;
+      setCatExpression(mood.key);
+      addUserMessage(trimmed, mood);
+
+      // Update confidential score & negative streak
+      if (mood.negative) {
+        state.negativeStreak += 1;
+        state.confidentialScore = Math.max(45, state.confidentialScore - 1);
+      } else {
+        state.negativeStreak = 0;
+        state.confidentialScore = Math.min(98, state.confidentialScore + 2);
+      }
+
+      scoreNum.textContent = state.confidentialScore;
+      scoreCircle.style.setProperty("--pct", state.confidentialScore);
+
+      // 5-sec motivational sticker if user keeps talking negatively
+      if (state.negativeStreak >= 2) {
+        showMotivationalSticker();
+      }
+
+      // Lively cat bounce + typing indicator
+      peekingCatBtn.classList.remove("booped");
+      void peekingCatBtn.offsetWidth;
+      peekingCatBtn.classList.add("booped");
+
+      showTypingIndicator();
+
+      const delay = 550 + Math.floor(Math.random() * 350);
+      setTimeout(() => {
+        removeTypingIndicator();
+        const reply = generateLivelyReply(trimmed, mood, topic);
+        addMirageMessage(reply.text, reply.action);
+      }, delay);
+    }
+
+    chatForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      handleUserSend(chatInput.value);
+      chatInput.value = "";
+    });
+
+    // ---------------- DECISION HELPER ----------------
+    document.getElementById("decisionForm").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const dilemma = document.getElementById("dilemmaInput").value.trim();
+      const optA = document.getElementById("optionAInput").value.trim();
+      const optB = document.getElementById("optionBInput").value.trim();
+
+      const favorA = state.confidentialScore >= 72;
+      const chosen = favorA ? optA : optB;
+
+      document.getElementById("decisionChoiceTitle").textContent = `Mirage suggests: "${chosen}"`;
+      document.getElementById("decisionExplanation").textContent =
+        `Looking at your Confidential Clarity Score (${state.confidentialScore}/100) and how you've handled past stress around "${dilemma}", "${chosen}" protects your peace of mind better long-term. Overthinking often disguises the familiar choice as the safer one—trust your deeper pattern.`;
+
+      document.getElementById("decisionResult").classList.remove("hidden");
+    });
+
+    // ---------------- PROFILE PRIVACY BLUR ----------------
+    document.getElementById("toggleBlurBtn").addEventListener("click", (e) => {
+      state.scoreHidden = !state.scoreHidden;
+      scoreCircle.classList.toggle("blurred", state.scoreHidden);
+      e.target.textContent = state.scoreHidden ? "👁️ Show Confidential Score" : "👁️ Hide Confidential Score";
+    });
+  </script>
+</body>
+</html>
